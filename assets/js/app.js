@@ -36,6 +36,8 @@ const Pickr = {
       dateFormat: "Z",
       enableTime: true,
       time_24hr: true,
+      altFormat: "F j, Y H:i",
+      altInput: true,
       wrap: true,
       onClose(selectedDates, dateStr, instance) {
         // This ensures we blur the field when the date window closes.

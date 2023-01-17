@@ -23,7 +23,7 @@ defmodule FlatpickrExampleWeb.HomeLive do
   def handle_event("submit", %{"form" => params}, socket) do
     params |> IO.inspect(limit: :infinity, label: "params")
     new_assigns = %{
-      changeset: Ecto.Changeset.change(%Form{}, %{})
+      changeset: Ecto.Changeset.cast(%Form{}, params, [:datetime])
     }
     {:noreply, assign(socket, new_assigns)}
   end
