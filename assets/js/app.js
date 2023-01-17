@@ -27,10 +27,29 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+import flatpickr from "flatpickr";
 
+const Pickr = {
+  mounted() {
+    this.pickr = flatpickr(this.el, {
+      allowInput: true,
+      dateFormat: "Z",
+      enableTime: true,
+      time_24hr: true,
+      wrap: true,
+      onClose(selectedDates, dateStr, instance) {
+        // This ensures we blur the field when the date window closes.
+        instance.input.dispatchEvent(new Event("blur", {bubbles: true}))
+      }
+    });
+  },
+  destroyed() {
+    this.pickr.destroy();
+  },
+};
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}, hooks: { }})
+let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}, hooks: { Pickr: Pickr }})
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
