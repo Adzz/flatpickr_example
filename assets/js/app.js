@@ -31,22 +31,36 @@ import flatpickr from "flatpickr";
 
 const Pickr = {
   mounted() {
+    // NOTE! If you are using a custom format then flatpickr swaps out the inputs. To
+    // make this play nice with phoenix forms you'll need to ignore updates to the field
+    // EXAMPLE:
+
+    // </.form :let={f} for={@changeset}>
+      // <%= label f, :the_date, "Submitted To Airline At" %>
+      // <div phx-update="ignore" phx-hook="Pickr" id="my_id" date-format="F j, Y H:i">
+          //   ^^^^^^^^^^^^^^                      ^^^^^^^^^
+          //      Important                    hooks need an ID
+
+      //   <%= text_input f, :the_date, data_input: true, class: "form-control", phx_debounce: "blur" %>
+      // </div>
+    // </.form>
+
+    const altFormat = this.el.getAttribute("date-format");
+    const opts = {altFormat: altFormat, altInputClass: "", altInput: true};
+    const altOptions = altFormat ? opts : {}
+
     this.pickr = flatpickr(this.el, {
+      ...altOptions,
       allowInput: true,
       dateFormat: "Z",
       enableTime: true,
       time_24hr: true,
-      altFormat: "F j, Y H:i",
-      altInput: true,
       wrap: true,
       onClose(selectedDates, dateStr, instance) {
         // This ensures we blur the field when the date window closes.
         instance.input.dispatchEvent(new Event("blur", {bubbles: true}))
       }
     });
-  },
-  destroyed() {
-    this.pickr.destroy();
   },
 };
 
